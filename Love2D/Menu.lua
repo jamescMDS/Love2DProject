@@ -1,5 +1,7 @@
 menuScene = {}
-
+local pinkplayerdata = require "PinkPlayerData"
+local blueplayerdata = require "BluePlayerData"
+local whiteplayerdata = require "WhitePlayerData"
 function menuScene.Construct()
   print("Menu::Construct")
 
@@ -16,6 +18,15 @@ function menuScene.Construct()
 
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
+
+  pinkplayerdata.Construct()
+  pinkPlayerImg = love.graphics.newImage("Pink_Monster/Pink_Monster.png")
+  blueplayerdata.Construct()
+  bluePlayerImg = love.graphics.newImage("3 Dude_Monster/Dude_Monster.png")
+  whiteplayerdata.Construct()
+  whitePlayerImg = love.graphics.newImage("2 Owlet_Monster/Owlet_Monster.png")
+
+  selectedPlayerData = pinkplayerdata
 end
 
 function menuScene.Update(dt)
@@ -40,7 +51,7 @@ end
 
 function menuScene.Draw()
   -- body...
-
+  love.graphics.rectangle("fill", 0, 0, 1200, 640)
   if defaultDisplay == true then
 
   -- default defaultDisplay
@@ -55,14 +66,45 @@ function menuScene.Draw()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(startBtnImg, centerX - startBtnImgDim[1] / 2, centerY - startBtnImgDim[2] * 3, 0, 1, 1)
 
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("fill", 1200 * 0.25 - 100, centerY + 20, 200, 200)
+    if selectedPlayerData == pinkplayerdata then
+      love.graphics.setColor(0, 0, 0, 0.8)
+      love.graphics.rectangle("fill", 1200 * 0.25 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(pinkPlayerImg, 1200 * 0.25 - 100, centerY + 20, 0, 6, 6)
+    else
+      love.graphics.setColor(0, 0, 0, 0.4)
+      love.graphics.rectangle("fill", 1200 * 0.25 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.draw(pinkPlayerImg, 1200 * 0.25 - 100, centerY + 20, 0, 6, 6)
+    end
+
+    if selectedPlayerData == whiteplayerdata then
+      love.graphics.setColor(0, 0, 0, 0.8)
+      love.graphics.rectangle("fill", 1200 * 0.5 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(whitePlayerImg, 1200 * 0.5 - 90, centerY + 20, 0, 6, 6)
+    else
+      love.graphics.setColor(0, 0, 0, 0.4)
+      love.graphics.rectangle("fill", 1200 * 0.5 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.draw(whitePlayerImg, 1200 * 0.5 - 90, centerY + 20, 0, 6, 6)
+    end
+
+
+    if selectedPlayerData == blueplayerdata then
+      love.graphics.setColor(0, 0, 0, 0.8)
+      love.graphics.rectangle("fill", 1200 * 0.75 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.draw(bluePlayerImg, 1200 * 0.75 - 100, centerY + 20, 0, 6, 6)
+    else
+      love.graphics.setColor(0, 0, 0, 0.4)
+      love.graphics.rectangle("fill", 1200 * 0.75 - 100, centerY + 20, 200, 200)
+      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.draw(bluePlayerImg, 1200 * 0.75 - 100, centerY + 20, 0, 6, 6)
+    end
+
 
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("fill", 1200 * 0.5 - 100, centerY + 20, 200, 200)
-
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("fill", 1200 * 0.75 - 100, centerY + 20, 200, 200)
   end
 
 end
