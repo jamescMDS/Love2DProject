@@ -41,6 +41,7 @@ function menuScene.Update(dt)
   else
     -- character selection display
     menuScene.StartClick()
+    menuScene.CharacterBoxClick()
   end
 
   if love.mouse.isDown(1) == false then
@@ -140,6 +141,39 @@ function menuScene.StartClick()
       end
     end
   end
+end
+
+function menuScene.CharacterBoxClick()
+  --pink Player
+  if love.mouse.isDown(1) and mouseLock == false then
+    if love.mouse.getX() > 1200 * 0.25 - 100 and love.mouse.getX() < 1200 * 0.25 - 100 + 200 then
+      if love.mouse.getY() > centerY + 20 and love.mouse.getY() < centerY + 20 + 200 then
+        mouseLock = true
+        selectedPlayerData = pinkplayerdata
+      end
+    end
+  end
+
+  --blue player
+  if love.mouse.isDown(1) and mouseLock == false then
+    if love.mouse.getX() > 1200 * 0.75 - 100 and love.mouse.getX() < 1200 * 0.75 - 100 + 200 then
+      if love.mouse.getY() > centerY + 20 and love.mouse.getY() < centerY + 20 + 200 then
+        mouseLock = true
+        selectedPlayerData = blueplayerdata
+      end
+    end
+  end
+
+  --whitePlayer
+  if love.mouse.isDown(1) and mouseLock == false then
+    if love.mouse.getX() > 1200 * 0.5 - 100 and love.mouse.getX() < 1200 * 0.5 - 100 + 200 then
+      if love.mouse.getY() > centerY + 20 and love.mouse.getY() < centerY + 20 + 200 then
+        mouseLock = true
+        selectedPlayerData = whiteplayerdata
+      end
+    end
+  end
+
 end
 
 return menuScene
