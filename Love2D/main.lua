@@ -36,7 +36,7 @@ end
 
 function ChangeScene(_name)
   if _name == "GameScene" then
-    gs.Construct()
+    gs.Construct(selectedPlayerData)
     currentScene = gs;
   end
 end

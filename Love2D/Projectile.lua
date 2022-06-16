@@ -6,22 +6,22 @@ function projectile.Construct(self, x, y, vx, vy)
   self.vy = vy
   self.x = x
   self.y = y
-  self.scale = 0.6
-  sheet = love.graphics.newImage('Pink_Projectile.png')
+  self.scale = 1.5
+  sheet = love.graphics.newImage('Spell1.png')
   imageDimension = {sheet:getDimensions()}
-  self.width = imageDimension[1] / 8
-  self.height = imageDimension[2] / 8
+  self.width = imageDimension[1] / 30
+  self.height = imageDimension[2]
   self.isDestroyed = false
   self.ShootProjectile(self)
 
   self.body = love.physics.newBody(gameScene.world, self.x, self.y, "dynamic")
   self.body:setGravityScale(0)
   --projectile.body:setLinearDamping(0.75)
-  self.shape = love.physics.newRectangleShape((self.width * self.scale)/2, (self.height * self.scale)/2, (self.width * self.scale) / 2, ((self.height) * self.scale)/2) -- ORIGINALLY DIVIDED BY 2
+  self.shape = love.physics.newRectangleShape((self.width * self.scale)/2, (self.height * self.scale)/2, (self.width * self.scale) / 4, ((self.height) * self.scale)/4) -- ORIGINALLY DIVIDED BY 2
   self.fixture = love.physics.newFixture(self.body, self.shape, 1)
   self.fixture:setUserData(self)
 
-  self.body:applyLinearImpulse(self.vx * 70, (self.vy * 1000))
+  self.body:applyLinearImpulse(self.vx * 10, 0)
 
   self.id = 0
 end
@@ -46,11 +46,11 @@ function projectile.Draw(self)
 end
 function projectile.ShootProjectile(self)
   shootProjectile = {}
-  shootProjectile.sheet = love.graphics.newImage('Pink_Projectile.png')
+  shootProjectile.sheet = love.graphics.newImage('Spell1.png')
   shootProjectile.imageDimension = {shootProjectile.sheet:getDimensions()}
 
   shootProjectile.grid = anim8.newGrid(self.width, self.height, shootProjectile.imageDimension[1], shootProjectile.imageDimension[2])
-  shootProjectile.gridAnimation = anim8.newAnimation(shootProjectile.grid('1-8', 1, '1-8', 2, '1-8', 3, '1-8', 4, '1-8', 5, '1-8', 6, '1-8', 7, '1-8', 8), 0.1)
+  shootProjectile.gridAnimation = anim8.newAnimation(shootProjectile.grid('1-30', 1), 0.1)
   shootProjectile.gridAnimation:flipH()
   self.shootProjectile = shootProjectile
 

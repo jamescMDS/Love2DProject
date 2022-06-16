@@ -4,7 +4,6 @@ local blueplayerdata = require "BluePlayerData"
 local whiteplayerdata = require "WhitePlayerData"
 function menuScene.Construct()
   print("Menu::Construct")
-
   defaultDisplay = true
   mouseLock = false
   playBtnImg = love.graphics.newImage("button_play.png")
@@ -27,11 +26,16 @@ function menuScene.Construct()
   whitePlayerImg = love.graphics.newImage("2 Owlet_Monster/Owlet_Monster.png")
 
   selectedPlayerData = pinkplayerdata
+
+  sti = require("Simple-Tiled-Implementation-master/sti")
+  map = sti("MenuMap.lua")
+
+  bluePlayerBGimage = love.graphics.newImage("3 Dude_Monster/bluerez.png")
 end
 
 function menuScene.Update(dt)
   -- body...
-
+  map:update(dt)
   if defaultDisplay == true then
 
   -- default defaultDisplay
@@ -52,7 +56,20 @@ end
 
 function menuScene.Draw()
   -- body...
-  love.graphics.rectangle("fill", 0, 0, 1200, 640)
+
+  map:drawLayer(map.layers["Tile Layer 9"])
+  map:drawLayer(map.layers["Tile Layer 8"])
+  map:drawLayer(map.layers["Tile Layer 7"])
+  map:drawLayer(map.layers["Tile Layer 6"])
+  map:drawLayer(map.layers["Tile Layer 5"])
+  map:drawLayer(map.layers["Tile Layer 4"])
+  map:drawLayer(map.layers["Tile Layer 3"])
+  map:drawLayer(map.layers["Tile Layer 2"])
+  love.graphics.draw(bluePlayerBGimage, centerX + 220, centerY - 155, 0, -1, 1)
+  map:drawLayer(map.layers["Tile Layer 1"])
+
+
+  --love.graphics.rectangle("fill", 0, 0, 1200, 640)
   if defaultDisplay == true then
 
   -- default defaultDisplay

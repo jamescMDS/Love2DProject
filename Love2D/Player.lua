@@ -1,8 +1,9 @@
 player = {}
 require "Projectile"
 
-function player.Construct(x, y)
+function player.Construct(x, y, playerData)
   print("Player::Construct")
+  player.playerData = playerData
   player.x = x
   player.y = y
   player.dir = 1
@@ -44,7 +45,7 @@ end
 
 function player.RunPlayer()
   runPlayer = {}
-  runPlayer.sheet = love.graphics.newImage('Pink_Monster/Pink_Monster_Run.png')
+  runPlayer.sheet = love.graphics.newImage(player.playerData.runAnimationFile)
   runPlayer.imageDimension = {runPlayer.sheet:getDimensions()}
 
   runPlayer.grid = anim8.newGrid(player.width, player.height, runPlayer.imageDimension[1], runPlayer.imageDimension[2])
@@ -80,7 +81,7 @@ end
 
 function player.IdlePlayer()
   idlePlayer = {}
-  idlePlayer.sheet = love.graphics.newImage('Pink_Monster/Pink_Monster_Idle.png')
+  idlePlayer.sheet = love.graphics.newImage(player.playerData.idleAnimationFile)
   idlePlayer.imageDimension = {idlePlayer.sheet:getDimensions()}
   idlePlayer.grid = anim8.newGrid(player.width, player.height, idlePlayer.imageDimension[1], idlePlayer.imageDimension[2])
   idlePlayer.gridAnimation = anim8.newAnimation(idlePlayer.grid('1-4', 1), 0.1, player.OnLoopIdle)
@@ -90,7 +91,7 @@ end
 
 function player.JumpPlayer()
   jumpPlayer = {}
-  jumpPlayer.sheet = love.graphics.newImage('Pink_Monster/Pink_Monster_Jump.png')
+  jumpPlayer.sheet = love.graphics.newImage(player.playerData.jumpAnimationFile)
   jumpPlayer.imageDimension = {jumpPlayer.sheet:getDimensions()}
   jumpPlayer.grid = anim8.newGrid(player.width, player.height, jumpPlayer.imageDimension[1], jumpPlayer.imageDimension[2])
   jumpPlayer.gridAnimation = anim8.newAnimation(jumpPlayer.grid('1-8', 1), 0.1, player.OnLoopJump)
@@ -100,7 +101,7 @@ end
 
 function player.ShootPlayer()
   shootPlayer = {}
-  shootPlayer.sheet = love.graphics.newImage('Pink_Monster/Pink_Monster_Attack1_4.png')
+  shootPlayer.sheet = love.graphics.newImage(player.playerData.attackAnimationFile)
   shootPlayer.imageDimension = {shootPlayer.sheet:getDimensions()}
   shootPlayer.grid = anim8.newGrid(player.width, player.height, shootPlayer.imageDimension[1], shootPlayer.imageDimension[2])
   shootPlayer.gridAnimation = anim8.newAnimation(shootPlayer.grid('1-4', 1), 0.1, player.OnLoopShoot)
@@ -110,7 +111,7 @@ end
 
 function player.ShootRunPlayer()
   shootRunPlayer = {}
-  shootRunPlayer.sheet = love.graphics.newImage('Pink_Monster/Pink_Monster_Walk+Attack_6.png')
+  shootRunPlayer.sheet = love.graphics.newImage(player.playerData.runAttackAnimationFile)
   shootRunPlayer.imageDimension = {shootRunPlayer.sheet:getDimensions()}
   shootRunPlayer.grid = anim8.newGrid(player.width, player.height, shootRunPlayer.imageDimension[1], shootRunPlayer.imageDimension[2])
   shootRunPlayer.gridAnimation = anim8.newAnimation(shootRunPlayer.grid('1-6', 1), 0.1, player.OnLoopShootRun)
@@ -244,7 +245,7 @@ function player.Update(dt)
 end
 
 function player.Draw()
-  --love.graphics.rectangle("line", player.x, player.y, (player.width) * player.scale, (player.height) * player.scale)
+  love.graphics.rectangle("line", player.body:getX(), player.body:getY(), player.width * player.scale, player.height * player.scale)
 
   local xOffset = 0
   local vx, vy = player.body:getLinearVelocity()
