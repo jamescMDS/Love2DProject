@@ -8,9 +8,23 @@
     ],
     "fileStates": {
     },
+    "last.exportedFilePath": "C:/Users/james/Documents/GitHub/Love2DProject/Love2D",
+    "last.imagePath": "C:/Users/james/Documents/GitHub/Love2DProject/Love2D/Mossy Tileset",
+    "map.height": 40,
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "map.renderOrder": null,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 1200,
     "openFiles": [
     ],
     "project": "Love2DTiled.tiled-project",
     "recentFiles": [
-    ]
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
 }
