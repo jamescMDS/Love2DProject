@@ -18,7 +18,7 @@ function gameScene.Construct(selectedPlayer)
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
-  player.Construct(450, centerY + 100, gameScene.selectedPlayer)
+  player.Construct(700, centerY - 100, gameScene.selectedPlayer)
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
   enemy1.Construct(enemy1, 1300, centerY, 1125, centerY, 1500, centerY, wraith1AnimData)
@@ -38,14 +38,19 @@ function gameScene.Construct(selectedPlayer)
 
 
   sti = require("Simple-Tiled-Implementation-master/sti")
-  map = sti("map3.lua")
+  --map = sti("map3.lua")
+  map = sti("mapfiles2.lua")
 
-  border = love.graphics.newImage("border2.png")
+  border = love.graphics.newImage("fadegrad.png")
   platforms = {}
 
   gameScene.AddPhysicsToLevel()
 
   cam = cameraFile()
+end
+
+function gameScene.Destruct()
+  gameScene.world:destroy()
 end
 
 function beginContact(a, b, coll)
@@ -57,6 +62,8 @@ end
 
 function gameScene.Update(dt)
   -- body...
+
+  if player.body:getY() > 640 then ChangeScene("Menu") return end
   gameScene.world:update(dt)
 
   player.x = player.body:getX()
@@ -79,7 +86,7 @@ function gameScene.Update(dt)
   map:update(dt)
 
   --cam:lookAt(player.body:getX() + 300, player.body:getY() - 100)
-  cam:lookAt(player.body:getX() + 300, centerY + 360)
+  cam:lookAt(player.body:getX() + 300, centerY)
   --cam:lookAt(1300, 595)
 
 end
@@ -88,13 +95,16 @@ function gameScene.Draw()
   -- body...
   --love.graphics.setDefaultFilter("nearest", "nearest")
   cam:attach()
+  map:drawLayer(map.layers["Tile Layer 13"])
+  map:drawLayer(map.layers["Tile Layer 12"])
+  map:drawLayer(map.layers["Tile Layer 11"])
+  map:drawLayer(map.layers["Tile Layer 10"])
+  map:drawLayer(map.layers["Tile Layer 9"])
   map:drawLayer(map.layers["Tile Layer 8"])
   map:drawLayer(map.layers["Tile Layer 7"])
   map:drawLayer(map.layers["Tile Layer 6"])
   map:drawLayer(map.layers["Tile Layer 5"])
   map:drawLayer(map.layers["Tile Layer 4"])
-  map:drawLayer(map.layers["Tile Layer 3"])
-  map:drawLayer(map.layers["Tile Layer 2"])
 
   player.Draw()
   for i = 1, table.getn(gameScene.enemies), 1 do
@@ -104,14 +114,14 @@ function gameScene.Draw()
   end
 
 
+  map:drawLayer(map.layers["Tile Layer 3"])
+  map:drawLayer(map.layers["Tile Layer 2"])
   map:drawLayer(map.layers["Tile Layer 1"])
-  map:drawLayer(map.layers["Tile Layer 10"])
-  map:drawLayer(map.layers["Tile Layer 9"])
 
-  love.graphics.push()
-  love.graphics.scale(1, 1.065)
-  love.graphics.draw(border, 0 / 1, 361.25 / 1.065)
-  love.graphics.pop() -- so the scale doesn't affect anything else
+  --love.graphics.push()
+  --love.graphics.scale(1, 1.065)
+  love.graphics.draw(border,0, 0, 0, 1, 1)
+  --love.graphics.pop() -- so the scale doesn't affect anything else
 
   --love.graphics.setColor(255, 255, 255, 255)
   cam:detach()

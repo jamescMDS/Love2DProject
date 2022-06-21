@@ -18,7 +18,7 @@ function player.Construct(x, y, playerData)
   player.shape = love.physics.newRectangleShape((player.width * player.scale)/2, (player.height * player.scale)/2, ((player.width) * player.scale), ((player.height) * player.scale)) -- ORIGINALLY DIVIDED BY 2
   player.fixture = love.physics.newFixture(player.body, player.shape, 1)
   player.fixture:setUserData(player)
-
+  player.fixture:setFriction(0)
   player.canJump = true
   player.isJumping = false
   player.isGrounded = true
@@ -122,7 +122,7 @@ end
 function player.Update(dt)
   --player.body.setAngle(player.body, 0)
   player.body:setAngle(0)
-
+  print(player.body:getLinearVelocity())
   local axisX = 0
 
   if love.keyboard.isDown('a') then
@@ -182,10 +182,13 @@ function player.Update(dt)
     player.isIdle = true
   end
   if axisX ~= 0 then
-    if player.isGrounded then
-      player.body:applyForce(axisX * 20000 * player.scale * dt, 0)
-    else
-      player.body:applyForce(axisX * 20000 * player.scale * dt * 0.1, 0)
+    vx, vy = player.body:getLinearVelocity()
+    if vx < 350 and vx > -350 then
+      if player.isGrounded then
+        player.body:applyForce(axisX * 20000 * player.scale * dt, 0)
+      else
+        player.body:applyForce(axisX * 20000 * player.scale * dt * 0.1, 0)
+      end
     end
     player.isIdle = false
   end

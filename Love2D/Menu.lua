@@ -6,6 +6,9 @@ function menuScene.Construct()
   print("Menu::Construct")
   defaultDisplay = true
   mouseLock = false
+
+  love.graphics.setDefaultFilter("nearest", "nearest")
+
   playBtnImg = love.graphics.newImage("button_play.png")
   playBtnImgDim = {playBtnImg:getDimensions()}
 
@@ -32,7 +35,8 @@ function menuScene.Construct()
 
   bluePlayerBGimage = love.graphics.newImage("3 Dude_Monster/bluerez.png")
 end
-
+function menuScene.Destruct()
+end
 function menuScene.Update(dt)
   -- body...
   map:update(dt)

@@ -35,8 +35,11 @@ function love.draw()
 end
 
 function ChangeScene(_name)
+  if currentScene.Destruct() ~= nil then currentScene.Destruct() end
+  currentScene = nil
   if _name == "GameScene" then
     gs.Construct(selectedPlayerData)
     currentScene = gs;
   end
+  if _name == "Menu" then menu.Construct() currentScene = menu end
 end
