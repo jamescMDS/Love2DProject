@@ -6,6 +6,7 @@
     "activeFile": "",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
             "scaleInDock": 1
@@ -13,7 +14,7 @@
     },
     "last.exportedFilePath": "C:/Users/james/Documents/GitHub/Love2DProject/Love2D",
     "last.externalTilesetPath": "C:/Users/james/Documents/GitHub/Love2DProject",
-    "last.imagePath": "C:/Users/james/Documents/GitHub/Love2DProject/Love2D/Mossy Tileset",
+    "last.imagePath": "C:/Users/james/Documents/GitHub/Love2DProject/Love2D",
     "map.height": 40,
     "map.lastUsedExportFilter": "Lua files (*.lua)",
     "map.lastUsedFormat": "tmx",

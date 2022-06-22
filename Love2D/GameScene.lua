@@ -4,6 +4,7 @@ require "Enemy"
 require "Wraith1_AnimData"
 anim8 = require("anim8-master/anim8")
 cameraFile = require("hump-master/camera")
+require "particleSystem"
 
 function gameScene.Construct(selectedPlayer)
   love.physics.setMeter(64)
@@ -19,11 +20,36 @@ function gameScene.Construct(selectedPlayer)
   centerY = love.graphics.getHeight()/2
 
   player.Construct(700, centerY - 100, gameScene.selectedPlayer)
+
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
-  enemy1.Construct(enemy1, 1300, centerY, 1125, centerY, 1500, centerY, wraith1AnimData)
+  enemy1.Construct(enemy1, 1500, centerY, 1300, centerY, 1600, centerY, wraith1AnimData)
 
   table.insert(gameScene.enemies, enemy1)
+
+  enemy2 = {}
+  setmetatable(enemy2, {__index = enemy})
+  enemy2.Construct(enemy2, 2300, 450, 2050, 450, 2600, 450, wraith1AnimData)
+
+  table.insert(gameScene.enemies, enemy2)
+
+  enemy3 = {}
+  setmetatable(enemy3, {__index = enemy})
+  enemy3.Construct(enemy3, 4800, 375, 4500, 450, 5100, 450, wraith1AnimData)
+
+  table.insert(gameScene.enemies, enemy3)
+
+  enemy4 = {}
+  setmetatable(enemy4, {__index = enemy})
+  enemy4.Construct(enemy4, 6000, 375, 5750, 450, 6200, 450, wraith1AnimData)
+
+  table.insert(gameScene.enemies, enemy4)
+
+  enemy5 = {}
+  setmetatable(enemy5, {__index = enemy})
+  enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9900, 100, wraith1AnimData)
+
+  table.insert(gameScene.enemies, enemy5)
 
   --enemy2 = {}
   --setmetatable(enemy2, {__index = enemy})
@@ -47,6 +73,11 @@ function gameScene.Construct(selectedPlayer)
   gameScene.AddPhysicsToLevel()
 
   cam = cameraFile()
+
+  newPS = {}
+  setmetatable(newPS, {__index = particleSystem})
+
+  newPS.Construct(newPS, "BlueParticle.png", 1000, -1, 10, 12, 50)
 end
 
 function gameScene.Destruct()
@@ -69,7 +100,7 @@ function gameScene.Update(dt)
   player.x = player.body:getX()
   player.y = player.body:getY()
 
-
+  newPS.system:update(dt)
 
   player.Update(dt)
 
@@ -87,14 +118,21 @@ function gameScene.Update(dt)
 
   --cam:lookAt(player.body:getX() + 300, player.body:getY() - 100)
   cam:lookAt(player.body:getX() + 300, centerY)
-  --cam:lookAt(1300, 595)
+  --cam:lookAt(11580, 250)
 
+  psPosX, psPosY = newPS.system:getPosition()
+
+  if player.body:getX() > 11540 then
+    ChangeScene("Menu")
+  end
 end
 
 function gameScene.Draw()
   -- body...
   --love.graphics.setDefaultFilter("nearest", "nearest")
   cam:attach()
+  map:drawLayer(map.layers["Tile Layer 15"])
+  map:drawLayer(map.layers["Tile Layer 14"])
   map:drawLayer(map.layers["Tile Layer 13"])
   map:drawLayer(map.layers["Tile Layer 12"])
   map:drawLayer(map.layers["Tile Layer 11"])
@@ -104,7 +142,7 @@ function gameScene.Draw()
   map:drawLayer(map.layers["Tile Layer 7"])
   map:drawLayer(map.layers["Tile Layer 6"])
   map:drawLayer(map.layers["Tile Layer 5"])
-  map:drawLayer(map.layers["Tile Layer 4"])
+
 
   player.Draw()
   for i = 1, table.getn(gameScene.enemies), 1 do
@@ -113,7 +151,9 @@ function gameScene.Draw()
     end
   end
 
+  love.graphics.draw(newPS.system, 11580, 285, 0, 0.05, 0.05, 250 * 0.05, 0)
 
+  map:drawLayer(map.layers["Tile Layer 4"])
   map:drawLayer(map.layers["Tile Layer 3"])
   map:drawLayer(map.layers["Tile Layer 2"])
   map:drawLayer(map.layers["Tile Layer 1"])
