@@ -1,6 +1,7 @@
 --require "Player"
 menu = require("Menu")
 gs = require("GameScene")
+gs2 = require("GameScene2")
 currentScene = {}
 function love.load(arg)
   -- body --
@@ -40,6 +41,10 @@ function ChangeScene(_name)
   if _name == "GameScene" then
     gs.Construct(selectedPlayerData)
     currentScene = gs;
+  end
+  if _name == "GameScene2" then
+    gs2.Construct(selectedPlayerData)
+    currentScene = gs2;
   end
   if _name == "Menu" then menu.Construct() currentScene = menu end
 end

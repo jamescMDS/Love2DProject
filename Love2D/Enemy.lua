@@ -10,8 +10,9 @@ function math.normalize(nx, ny)
 end
 -----------------------------------------------------
 -------------------CONSTRUCT ENEMY-------------------
-function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData)
+function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData, world)
   print("Enemy::Construct")
+  self.world = world
   self.x = x
   self.y = y
   self.animData = animData
@@ -52,7 +53,7 @@ function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData)
   self.ShootPlayer(self, self.animData.attackAnimationFile)
   self.DiePlayer(self, self.animData.dieAnimationFile)
 
-  self.body = love.physics.newBody(gameScene.world, x, y, "dynamic")
+  self.body = love.physics.newBody(world, x, y, "dynamic")
   self.body:setLinearDamping(0.75)
   self.shape = love.physics.newRectangleShape((self.width * self.scale)/2, (self.height * self.scale)/2, (self.width * self.scale)/2, (self.height * self.scale) * 0.8) -- ORIGINALLY DIVIDED BY 2
   self.fixture = love.physics.newFixture(self.body, self.shape, 1)
@@ -144,7 +145,7 @@ function enemy.OnLoopShoot(_anim, _loops, self)
   _anim:pauseAtStart()
   local newProjectile = {}
   setmetatable(newProjectile, {__index = projectile})
-  newProjectile.Construct(newProjectile, self.body:getX() + self.boxWidth / 1.95 + 40 * self.velx, self.body:getY() + 10, self.velx, 0)
+  newProjectile.Construct(newProjectile, self.body:getX() + self.boxWidth / 1.95 + 40 * self.velx, self.body:getY() + 10, self.velx, 0, self.world)
   table.insert(self.projectiles, 1, newProjectile)
 end
 
@@ -215,7 +216,7 @@ function enemy.CanSeePlayerCheck(self)
   canSeePlayerRay.y1 = self.body:getY() + 10
   canSeePlayerRay.x2 = self.x + 500 * velNormX
   canSeePlayerRay.y2 = self.body:getY() + 10
-  gameScene.world:rayCast(canSeePlayerRay.x1, canSeePlayerRay.y1, canSeePlayerRay.x2, canSeePlayerRay.y2, worldRayCastCallbackCanSee)
+  self.world:rayCast(canSeePlayerRay.x1, canSeePlayerRay.y1, canSeePlayerRay.x2, canSeePlayerRay.y2, worldRayCastCallbackCanSee)
   if table.getn(canSeePlayerRay.hitList) > 0 then
     if canSeePlayerRay.hitList[1].fixture:getUserData() == player then
       self.canSeePlayer = true
@@ -289,21 +290,21 @@ function enemy.GroundedCheck(self)
   groundedRay.x2 = self.x + self.width * self.scale / 2
   groundedRay.y2 = self.y + (self.height) * self.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  self.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   groundedRay.x1 = self.x
   groundedRay.y1 = self.y + (self.height) * self.scale - 1
   groundedRay.x2 = self.x
   groundedRay.y2 = self.y + (self.height) * self.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  self.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   groundedRay.x1 = self.x + self.width * self.scale
   groundedRay.y1 = self.y + (self.height) * self.scale - 1
   groundedRay.x2 = self.x + self.width * self.scale
   groundedRay.y2 = self.y + (self.height) * self.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  self.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   if table.getn(groundedRay.hitList) > 0 then
     self.isGrounded = true

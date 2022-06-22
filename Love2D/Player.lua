@@ -1,8 +1,9 @@
 player = {}
 require "Projectile"
 
-function player.Construct(x, y, playerData)
+function player.Construct(x, y, playerData, world)
   print("Player::Construct")
+  player.world = world
   player.playerData = playerData
   player.x = x
   player.y = y
@@ -13,7 +14,7 @@ function player.Construct(x, y, playerData)
   player.width = imageDimension[1] / 4
   player.height = imageDimension[2]
 
-  player.body = love.physics.newBody(gameScene.world, x, y, "dynamic")
+  player.body = love.physics.newBody(world, x, y, "dynamic")
   player.body:setLinearDamping(0.75)
   player.shape = love.physics.newRectangleShape((player.width * player.scale)/2, (player.height * player.scale)/2, ((player.width) * player.scale), ((player.height) * player.scale)) -- ORIGINALLY DIVIDED BY 2
   player.fixture = love.physics.newFixture(player.body, player.shape, 1)
@@ -148,7 +149,7 @@ function player.Update(dt)
         player.shootPlayer.gridAnimation:resume()
         local newProjectile = {}
         setmetatable(newProjectile, {__index = projectile})
-        newProjectile.Construct(newProjectile, player.body:getX() + player.width * player.scale * player.dir, player.body:getY(), player.dir, 0)
+        newProjectile.Construct(newProjectile, player.body:getX() + player.width * player.scale * player.dir, player.body:getY(), player.dir, 0, player.world)
         --table.insert(player.projectiles, newProjectile)
         table.insert(player.projectiles, 1, newProjectile)
       end
@@ -156,7 +157,7 @@ function player.Update(dt)
         player.shootRunPlayer.gridAnimation:resume()
         local newProjectile = {}
         setmetatable(newProjectile, {__index = projectile})
-        newProjectile.Construct(newProjectile, player.body:getX() + player.width * player.scale, player.body:getY(), 1, 0)
+        newProjectile.Construct(newProjectile, player.body:getX() + player.width * player.scale, player.body:getY(), 1, 0, player.world)
         --table.insert(player.projectiles, newProjectile)
         table.insert(player.projectiles, 1, newProjectile)
       end
@@ -223,21 +224,21 @@ function player.Update(dt)
   groundedRay.x2 = player.x + player.width * player.scale / 2
   groundedRay.y2 = player.y + (player.height) * player.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  player.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   groundedRay.x1 = player.x
   groundedRay.y1 = player.y + (player.height) * player.scale - 1
   groundedRay.x2 = player.x
   groundedRay.y2 = player.y + (player.height) * player.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  player.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   groundedRay.x1 = player.x + player.width * player.scale
   groundedRay.y1 = player.y + (player.height) * player.scale - 1
   groundedRay.x2 = player.x + player.width * player.scale
   groundedRay.y2 = player.y + (player.height) * player.scale + 10
 
-  gameScene.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
+  player.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   if table.getn(groundedRay.hitList) > 0 then
     player.isGrounded = true

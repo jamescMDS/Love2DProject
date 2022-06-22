@@ -1,4 +1,4 @@
-gameScene = {}
+gameScene2 = {}
 require "Player"
 require "Enemy"
 require "Wraith1_AnimData"
@@ -6,50 +6,50 @@ anim8 = require("anim8-master/anim8")
 cameraFile = require("hump-master/camera")
 require "particleSystem"
 
-function gameScene.Construct(selectedPlayer)
+function gameScene2.Construct(selectedPlayer)
   love.physics.setMeter(64)
   love.graphics.setDefaultFilter("nearest", "nearest")
-  gameScene.selectedPlayer = selectedPlayer
+  gameScene2.selectedPlayer = selectedPlayer
   print(selectedPlayer.runAnimationFile)
-  gameScene.world = love.physics.newWorld(0, 10 * 64, false)
+  gameScene2.world = love.physics.newWorld(0, 10 * 64, false)
 
-  gameScene.world:setCallbacks( beginContact, endContact, preSolve, postSolve )
+  gameScene2.world:setCallbacks( beginContact, endContact, preSolve, postSolve )
 
-  gameScene.enemies = {}
+  gameScene2.enemies = {}
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
-  player.Construct(700, centerY - 100, gameScene.selectedPlayer, gameScene.world)
+  player.Construct(700, centerY - 100, gameScene2.selectedPlayer, gameScene2.world)
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
-  enemy1.Construct(enemy1, 1500, centerY, 1300, centerY, 1600, centerY, wraith1AnimData, gameScene.world)
+  enemy1.Construct(enemy1, 1500, centerY, 1300, centerY, 1600, centerY, wraith1AnimData, gameScene2.world)
 
-  table.insert(gameScene.enemies, enemy1)
+  table.insert(gameScene2.enemies, enemy1)
 
   enemy2 = {}
   setmetatable(enemy2, {__index = enemy})
-  enemy2.Construct(enemy2, 2300, 450, 2050, 450, 2600, 450, wraith1AnimData, gameScene.world)
+  enemy2.Construct(enemy2, 2300, 450, 2050, 450, 2600, 450, wraith1AnimData, gameScene2.world)
 
-  table.insert(gameScene.enemies, enemy2)
+  table.insert(gameScene2.enemies, enemy2)
 
   enemy3 = {}
   setmetatable(enemy3, {__index = enemy})
-  enemy3.Construct(enemy3, 4800, 375, 4500, 450, 5100, 450, wraith1AnimData, gameScene.world)
+  enemy3.Construct(enemy3, 4800, 375, 4500, 450, 5100, 450, wraith1AnimData, gameScene2.world)
 
-  table.insert(gameScene.enemies, enemy3)
+  table.insert(gameScene2.enemies, enemy3)
 
   enemy4 = {}
   setmetatable(enemy4, {__index = enemy})
-  enemy4.Construct(enemy4, 6000, 375, 5750, 450, 6200, 450, wraith1AnimData, gameScene.world)
+  enemy4.Construct(enemy4, 6000, 375, 5750, 450, 6200, 450, wraith1AnimData, gameScene2.world)
 
-  table.insert(gameScene.enemies, enemy4)
+  table.insert(gameScene2.enemies, enemy4)
 
   enemy5 = {}
   setmetatable(enemy5, {__index = enemy})
-  enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9900, 100, wraith1AnimData, gameScene.world)
+  enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9900, 100, wraith1AnimData, gameScene2.world)
 
-  table.insert(gameScene.enemies, enemy5)
+  table.insert(gameScene2.enemies, enemy5)
 
   --enemy2 = {}
   --setmetatable(enemy2, {__index = enemy})
@@ -65,12 +65,12 @@ function gameScene.Construct(selectedPlayer)
 
   sti = require("Simple-Tiled-Implementation-master/sti")
   --map = sti("map3.lua")
-  map = sti("mapfiles3.lua")
+  map = sti("mapfiles2.lua")
 
   border = love.graphics.newImage("fadegrad.png")
   platforms = {}
 
-  gameScene.AddPhysicsToLevel()
+  gameScene2.AddPhysicsToLevel()
 
   cam = cameraFile()
 
@@ -80,8 +80,8 @@ function gameScene.Construct(selectedPlayer)
   newPS.Construct(newPS, "BlueParticle.png", 1000, -1, 10, 12, 50)
 end
 
-function gameScene.Destruct()
-  gameScene.world:destroy()
+function gameScene2.Destruct()
+  gameScene2.world:destroy()
 end
 
 function beginContact(a, b, coll)
@@ -91,11 +91,11 @@ function beginContact(a, b, coll)
 
 end
 
-function gameScene.Update(dt)
+function gameScene2.Update(dt)
   -- body...
 
   if player.body:getY() > 640 then ChangeScene("Menu") return end
-  gameScene.world:update(dt)
+  gameScene2.world:update(dt)
 
   player.x = player.body:getX()
   player.y = player.body:getY()
@@ -104,11 +104,11 @@ function gameScene.Update(dt)
 
   player.Update(dt)
 
-  for i = 1, table.getn(gameScene.enemies), 1 do
-    if gameScene.enemies[i] ~= nil then
-      gameScene.enemies[i].Update(gameScene.enemies[i], dt)
-      if gameScene.enemies[i].destroy == true then
-        gameScene.enemies[i] = nil
+  for i = 1, table.getn(gameScene2.enemies), 1 do
+    if gameScene2.enemies[i] ~= nil then
+      gameScene2.enemies[i].Update(gameScene2.enemies[i], dt)
+      if gameScene2.enemies[i].destroy == true then
+        gameScene2.enemies[i] = nil
       end
     end
 
@@ -123,11 +123,11 @@ function gameScene.Update(dt)
   psPosX, psPosY = newPS.system:getPosition()
 
   if player.body:getX() > 11540 then
-    ChangeScene("GameScene2")
+    ChangeScene("Menu")
   end
 end
 
-function gameScene.Draw()
+function gameScene2.Draw()
   -- body...
   --love.graphics.setDefaultFilter("nearest", "nearest")
   cam:attach()
@@ -145,9 +145,9 @@ function gameScene.Draw()
 
 
   player.Draw()
-  for i = 1, table.getn(gameScene.enemies), 1 do
-    if gameScene.enemies[i] ~= nil then
-      gameScene.enemies[i].Draw(gameScene.enemies[i])
+  for i = 1, table.getn(gameScene2.enemies), 1 do
+    if gameScene2.enemies[i] ~= nil then
+      gameScene2.enemies[i].Draw(gameScene2.enemies[i])
     end
   end
 
@@ -168,22 +168,22 @@ function gameScene.Draw()
 
 end
 
-function gameScene.AddPhysicsToLevel()
+function gameScene2.AddPhysicsToLevel()
   for i, obj in pairs(map.layers["Objects"].objects) do
-    gameScene.CreatePhysicsBodyAt(obj.x, obj.y, obj.width, obj.height)
+    gameScene2.CreatePhysicsBodyAt(obj.x, obj.y, obj.width, obj.height)
   end
 end
 
-function gameScene.CreatePhysicsBodyAt(xPosition, yPosition, width, height)
+function gameScene2.CreatePhysicsBodyAt(xPosition, yPosition, width, height)
   platform = {}
   platform.width = width
   platform.height = height
-  platform.body = love.physics.newBody(gameScene.world, xPosition, yPosition, "static")
+  platform.body = love.physics.newBody(gameScene2.world, xPosition, yPosition, "static")
   platform.shape = love.physics.newRectangleShape(width/2, height/2, width, height)
   platform.fixture = love.physics.newFixture(platform.body, platform.shape, 1)
   platform.fixture:setFriction(1)
-  platform.fixture:setUserData(gameScene)
+  platform.fixture:setUserData(gameScene2)
   table.insert(platforms, platform)
 end
 
-return gameScene
+return gameScene2

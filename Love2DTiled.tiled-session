@@ -3,11 +3,74 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "Love2D/mapfiles2.tmx",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx": {
+            "scale": 1,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 11480.5,
+                "y": 418.5
+            }
+        },
+        "Love2D/mapfiles2.tmx#BG_Dec50p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#FloatingPlatforms": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#FloatingPlatforms15p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#FloatingPlatforms20p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#Hanging 40p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#HangingPlants": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#Hazards": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#MossyHills": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#MossyHills30p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#MossyHills60p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#TileSet": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#TileSet20p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#blueflower30p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#dark": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#hangingplants20p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#hazards30p": {
+            "scaleInDock": 1
+        },
+        "Love2D/mapfiles2.tmx#test": {
+            "scaleInDock": 1
+        },
+        "TileSet20p.tsx": {
             "scaleInDock": 1
         }
     },
@@ -22,9 +85,11 @@
     "map.tileWidth": 16,
     "map.width": 1200,
     "openFiles": [
+        "Love2D/mapfiles2.tmx"
     ],
     "project": "Love2DTiled.tiled-project",
     "recentFiles": [
+        "Love2D/mapfiles2.tmx"
     ],
     "tileset.embedInMap": true,
     "tileset.tileSize": {

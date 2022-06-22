@@ -1,6 +1,7 @@
 projectile = {}
 
-function projectile.Construct(self, x, y, vx, vy)
+function projectile.Construct(self, x, y, vx, vy, world)
+  self.world = world
   self.thisclass = self
   self.vx = vx
   self.vy = vy
@@ -14,7 +15,7 @@ function projectile.Construct(self, x, y, vx, vy)
   self.isDestroyed = false
   self.ShootProjectile(self)
 
-  self.body = love.physics.newBody(gameScene.world, self.x, self.y, "dynamic")
+  self.body = love.physics.newBody(self.world, self.x, self.y, "dynamic")
   self.body:setGravityScale(0)
   --projectile.body:setLinearDamping(0.75)
   self.shape = love.physics.newRectangleShape((self.width * self.scale)/2, (self.height * self.scale)/2, (self.width * self.scale) / 4, ((self.height) * self.scale)/4) -- ORIGINALLY DIVIDED BY 2
