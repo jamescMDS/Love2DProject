@@ -19,7 +19,7 @@ function gameScene2.Construct(selectedPlayer)
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
-  player.Construct(700, centerY - 100, gameScene2.selectedPlayer, gameScene2.world)
+  player.Construct(700, centerY - 120, gameScene2.selectedPlayer, gameScene2.world)
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})

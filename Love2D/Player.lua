@@ -2,6 +2,7 @@ player = {}
 require "Projectile"
 
 function player.Construct(x, y, playerData, world)
+
   print("Player::Construct")
   player.world = world
   player.playerData = playerData
@@ -14,18 +15,20 @@ function player.Construct(x, y, playerData, world)
   player.width = imageDimension[1] / 4
   player.height = imageDimension[2]
 
-  player.body = love.physics.newBody(world, x, y, "dynamic")
-  player.body:setLinearDamping(0.75)
-  player.shape = love.physics.newRectangleShape((player.width * player.scale)/2, (player.height * player.scale)/2, ((player.width) * player.scale), ((player.height) * player.scale)) -- ORIGINALLY DIVIDED BY 2
-  player.fixture = love.physics.newFixture(player.body, player.shape, 1)
-  player.fixture:setUserData(player)
-  player.fixture:setFriction(0)
+  player.ConstructPhysics()
+
+  player.ConstructAnimations();
+
   player.canJump = true
   player.isJumping = false
   player.isGrounded = true
   player.isIdle = true
   player.canShoot = true
   player.isShooting = false
+  player.isVolting = false
+
+  player.projectiles = {}
+
   groundedRay = {
 		x1 = player.x,
 		y1 = player.y + player.height * player.scale / 2,
@@ -34,13 +37,26 @@ function player.Construct(x, y, playerData, world)
 		hitList = {}
 	}
 
+end
+
+function player.ConstructPhysics()
+
+  player.body = love.physics.newBody(player.world, player.x, player.y, "dynamic")
+  player.body:setLinearDamping(0.75)
+  player.shape = love.physics.newRectangleShape((player.width * player.scale)/2, (player.height * player.scale)/2, ((player.width) * player.scale), ((player.height) * player.scale)) -- ORIGINALLY DIVIDED BY 2
+  player.fixture = love.physics.newFixture(player.body, player.shape, 1)
+  player.fixture:setUserData(player)
+  player.fixture:setFriction(0)
+
+end
+
+function player.ConstructAnimations()
+
   player.IdlePlayer()
   player.RunPlayer()
   player.JumpPlayer()
   player.ShootPlayer()
   player.ShootRunPlayer()
-
-  player.projectiles = {}
 
 end
 
@@ -142,6 +158,71 @@ function player.Update(dt)
     end
     player.dir = axisX
   end
+
+  if love.keyboard.isDown('space') and player.isVolting == false and player.isIdle == false then
+    player.body:applyLinearImpulse(9000 * player.dir * dt, 0)
+    player.isVolting = true
+  end
+
+  if player.isVolting == true then
+
+    local vx, vy = player.body:getLinearVelocity()
+    print("VELX = ", vx)
+    if vx < 0 then vx = -vx end
+    if vx < 200 then
+      player.isVolting = false
+      print("ISVOLTING=FALSE")
+    end
+  end
+  if player.isGrounded then
+    if player.isVolting == true then
+      local vx, vy = player.body:getLinearVelocity()
+      player.body:setLinearVelocity(vx + (0 - vx) * 0.4 * player.scale * dt, vy)
+    else if axisX == 0 then
+      local vx, vy = player.body:getLinearVelocity()
+      player.body:setLinearVelocity(vx + (0 - vx) * 50 * player.scale * dt, vy)
+      player.isIdle = true
+    end
+    end
+  end
+
+  if axisX ~= 0 and player.isVolting == false then
+    vx, vy = player.body:getLinearVelocity()
+    if vx < 350 and vx > -350 then
+      if player.isGrounded then
+        player.body:applyForce(axisX * 20000 * player.scale * dt, 0)
+      else
+        player.body:applyForce(axisX * 20000 * player.scale * dt * 0.1, 0)
+      end
+    end
+    player.isIdle = false
+  end
+
+  if love.keyboard.isDown('w') and player.isVolting == false then
+    if player.canJump == true then
+      if player.isJumping == false and player.isGrounded == true then
+        player.isJumping = true
+        player.body:applyLinearImpulse(0, -10000 * player.scale * dt)
+        player.jumpPlayer.gridAnimation:resume()
+      else if(player.isJumping == false) then
+        player.isJumping = true
+        player.canJump = false
+        player.body:applyLinearImpulse(0, -7000 * player.scale * dt)
+      end
+      end
+    end
+  else
+    player.isJumping = false
+  end
+
+  player.GroundCheck()
+
+end
+
+function player.CutVelocity(x, y)
+
+end
+function player.Shoot()
   if love.keyboard.isDown('lctrl') then
     if player.isShooting == false and player.isGrounded == true then
       player.isShooting = true
@@ -176,47 +257,17 @@ function player.Update(dt)
     end
 
   end
+end
 
-  if axisX == 0 and player.isGrounded then
-    local vx, vy = player.body:getLinearVelocity()
-    player.body:setLinearVelocity(vx + (0 - vx) * 50 * player.scale * dt, vy)
-    player.isIdle = true
-  end
-  if axisX ~= 0 then
-    vx, vy = player.body:getLinearVelocity()
-    if vx < 350 and vx > -350 then
-      if player.isGrounded then
-        player.body:applyForce(axisX * 20000 * player.scale * dt, 0)
-      else
-        player.body:applyForce(axisX * 20000 * player.scale * dt * 0.1, 0)
-      end
-    end
-    player.isIdle = false
-  end
-
-  if love.keyboard.isDown('space') then
-    if player.canJump == true then
-      if player.isJumping == false and player.isGrounded == true then
-        player.isJumping = true
-        player.body:applyLinearImpulse(0, -10000 * player.scale * dt)
-        player.jumpPlayer.gridAnimation:resume()
-      else if(player.isJumping == false) then
-        player.isJumping = true
-        player.canJump = false
-        player.body:applyLinearImpulse(0, -7000 * player.scale * dt)
-      end
-      end
-    end
-  else
-    player.isJumping = false
-  end
-
+function player.UpdateAnimations(dt)
   player.idlePlayer.gridAnimation:update(dt)
   player.runPlayer.gridAnimation:update(dt)
   player.jumpPlayer.gridAnimation:update(dt)
   player.shootPlayer.gridAnimation:update(dt)
   player.shootRunPlayer.gridAnimation:update(dt)
+end
 
+function player.GroundCheck()
   groundedRay.hitList = {}
 
   groundedRay.x1 = player.x + player.width * player.scale / 2
