@@ -37,7 +37,7 @@ function menuScene.Construct()
 
   music = love.audio.newSource("menumusic.wav", "static")
   music:setLooping(true)
-  music:setVolume(0.5)
+  music:setVolume(0.8)
   music:play()
 end
 function menuScene.Destruct()

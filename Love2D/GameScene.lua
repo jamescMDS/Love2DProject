@@ -177,7 +177,12 @@ function gameScene.Draw()
   --love.graphics.pop() -- so the scale doesn't affect anything else
 
   --love.graphics.setColor(255, 255, 255, 255)
+
+
   cam:detach()
+  for i = 0, player.lives - 1, 1 do
+    love.graphics.draw(player.heart, 25 + 50 * i, 25, 0, 2.3, 2.3)
+  end
 
 end
 

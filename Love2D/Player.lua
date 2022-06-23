@@ -19,6 +19,8 @@ function player.Construct(x, y, playerData, world)
 
   player.ConstructAnimations();
 
+  player.heart = love.graphics.newImage('heart.png')
+
   player.canJump = true
   player.isJumping = false
   player.isGrounded = true
@@ -390,6 +392,8 @@ function player.Draw()
     player.diePlayer.gridAnimation:draw(player.diePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
 
   end
+
+
 end
 
 function worldRayCastCallback(fixture, x, y, xn, yn, fraction)

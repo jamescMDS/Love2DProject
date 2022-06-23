@@ -42,7 +42,7 @@ function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData, world)
   --self.velx = self.velx / self.velx
   --self.vely = self.vely / self.vely
   --math.normalize(self.velX, self.velY)
-  self.dir = velx
+  self.dir = -1
   self.scale = 0.15
   sheet = love.graphics.newImage(self.animData.runAnimationFile)
   imageDimension = {sheet:getDimensions()}
@@ -89,7 +89,7 @@ function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData, world)
 		hitList = {}
 	}
 
-
+  self.flip = 1
 
   self.projectiles = {}
 
@@ -173,12 +173,13 @@ function enemy.Update(self, dt)
   --player.body.setAngle(player.body, 0)
 
   if self.velx ~= 0 then
-    if self.dir ~= self.velx then
+    if self.dir ~= self.flip then
       self.runPlayer.gridAnimation:flipH()
       self.shootPlayer.gridAnimation:flipH()
       self.diePlayer.gridAnimation:flipH()
+      self.flip = -self.flip
     end
-    self.dir = self.velx
+    --self.dir = self.velx
   end
 
   enemy.UpdateAnimations(self, dt)
@@ -264,6 +265,7 @@ function enemy.Navigate(self, dt)
       self.body:setLinearVelocity(0, 0)
       self.curWaypointX = self.waypointX2
       self.curWaypointY = self.waypointY2
+      self.dir = 1
     end
     self.velx = self.curWaypointX - self.x
     self.vely = self.curWaypointY - self.y
@@ -278,6 +280,7 @@ function enemy.Navigate(self, dt)
       self.body:setLinearVelocity(0, 0)
       self.curWaypointX = self.waypointX1
       self.curWaypointY = self.waypointY1
+      self.dir = -1
     end
     self.velx = self.curWaypointX - self.x
     self.vely = self.curWaypointY - self.y
