@@ -3,6 +3,9 @@ menu = require("Menu")
 gs = require("GameScene")
 gs2 = require("GameScene2")
 currentScene = {}
+
+scenechange = false
+nextscene = ""
 function love.load(arg)
   -- body --
 
@@ -22,7 +25,20 @@ function love.update(dt)
   -- body...
   currentScene.Update(dt)
 
-
+  if scenechange == true then
+    scenechange = false
+    if currentScene.Destruct() ~= nil then currentScene.Destruct() end
+    currentScene = nil
+    if nextscene == "GameScene" then
+      gs.Construct(selectedPlayerData)
+      currentScene = gs;
+    end
+    if nextscene == "GameScene2" then
+      gs2.Construct(selectedPlayerData)
+      currentScene = gs2;
+    end
+    if nextscene == "Menu" then menu.Construct() currentScene = menu end
+  end
 end
 
 function love.draw()
@@ -36,15 +52,7 @@ function love.draw()
 end
 
 function ChangeScene(_name)
-  if currentScene.Destruct() ~= nil then currentScene.Destruct() end
-  currentScene = nil
-  if _name == "GameScene" then
-    gs.Construct(selectedPlayerData)
-    currentScene = gs;
-  end
-  if _name == "GameScene2" then
-    gs2.Construct(selectedPlayerData)
-    currentScene = gs2;
-  end
-  if _name == "Menu" then menu.Construct() currentScene = menu end
+  scenechange = true
+  nextscene = _name
+
 end

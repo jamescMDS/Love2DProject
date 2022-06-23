@@ -28,6 +28,8 @@ function player.Construct(x, y, playerData, world)
   player.isVolting = false
   player.voltTime = 2
   player.voltTimer = 0
+  player.isDead = false;
+  player.lives = 3
 
   player.projectiles = {}
 
@@ -71,6 +73,7 @@ function player.ConstructAnimations()
   player.JumpPlayer()
   player.ShootPlayer()
   player.ShootRunPlayer()
+  player.DiePlayer()
 
 end
 
@@ -87,6 +90,14 @@ end
 
 function player.OnLoopRun(_anim, _loops)
   --print("RunLoop")
+end
+
+function player.OnLoopDie(_anim, _loops)
+  --print("RunLoop")
+  _anim:pauseAtStart()
+  if player.isDead == true then
+    ChangeScene("Menu")
+  end
 end
 
 function player.OnLoopJump(_anim, _loops)
@@ -117,6 +128,16 @@ function player.IdlePlayer()
   idlePlayer.grid = anim8.newGrid(player.width, player.height, idlePlayer.imageDimension[1], idlePlayer.imageDimension[2])
   idlePlayer.gridAnimation = anim8.newAnimation(idlePlayer.grid('1-4', 1), 0.1, player.OnLoopIdle)
   player.idlePlayer = idlePlayer
+
+end
+
+function player.DiePlayer()
+  diePlayer = {}
+  diePlayer.sheet = love.graphics.newImage(player.playerData.dieAnimationFile)
+  diePlayer.imageDimension = {diePlayer.sheet:getDimensions()}
+  diePlayer.grid = anim8.newGrid(player.width, player.height, diePlayer.imageDimension[1], diePlayer.imageDimension[2])
+  diePlayer.gridAnimation = anim8.newAnimation(diePlayer.grid('1-3', 1), 0.1, player.OnLoopDie)
+  player.diePlayer = diePlayer
 
 end
 
@@ -169,6 +190,7 @@ function player.Update(dt)
       player.idlePlayer.gridAnimation:flipH()
       player.jumpPlayer.gridAnimation:flipH()
       player.shootPlayer.gridAnimation:flipH()
+      player.diePlayer.gridAnimation:flipH()
     end
     player.dir = axisX
   end
@@ -300,6 +322,7 @@ function player.UpdateAnimations(dt)
   player.jumpPlayer.gridAnimation:update(dt)
   player.shootPlayer.gridAnimation:update(dt)
   player.shootRunPlayer.gridAnimation:update(dt)
+  player.diePlayer.gridAnimation:update(dt)
 end
 
 function player.GroundCheck()
@@ -340,34 +363,31 @@ end
 function player.Draw()
   love.graphics.rectangle("line", player.body:getX(), player.body:getY(), player.width * player.scale, player.height * player.scale)
 
-  local xOffset = 0
-  local vx, vy = player.body:getLinearVelocity()
-  local scaleVal = 1
-  if vx < -1 then
-    scaleVal = -1
-    --xOffset = (player.width - player.width / 2) * player.scale
-    xOffset = (player.width) * player.scale
-  end
+  if player.isDead == false then
 
-  if player.isIdle == true and player.isGrounded == true and player.isShooting == false then
-    player.idlePlayer.gridAnimation:draw(player.idlePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-  else if player.isGrounded == true and player.isVolting == false then
-    player.runPlayer.gridAnimation:draw(player.runPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-  end
-  end
-
-  if player.isGrounded == false then
-    player.jumpPlayer.gridAnimation:draw(player.jumpPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-  end
-
-  if player.isVolting == true then
-    player.shootPlayer.gridAnimation:draw(player.shootPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-  end
-
-  for i = 1, table.getn(player.projectiles), 1 do
-    if player.projectiles[i] ~= nil then
-      player.projectiles[i].Draw(player.projectiles[i])
+    if player.isIdle == true and player.isGrounded == true and player.isShooting == false then
+      player.idlePlayer.gridAnimation:draw(player.idlePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
+    else if player.isGrounded == true and player.isVolting == false then
+      player.runPlayer.gridAnimation:draw(player.runPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
     end
+    end
+
+    if player.isGrounded == false then
+      player.jumpPlayer.gridAnimation:draw(player.jumpPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
+    end
+
+    if player.isVolting == true then
+      player.shootPlayer.gridAnimation:draw(player.shootPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
+    end
+
+    for i = 1, table.getn(player.projectiles), 1 do
+      if player.projectiles[i] ~= nil then
+        player.projectiles[i].Draw(player.projectiles[i])
+      end
+
+    end
+  else
+    player.diePlayer.gridAnimation:draw(player.diePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
 
   end
 end
@@ -389,13 +409,18 @@ function player.OnCollisionBegin(a, b)
   if player.isVolting == true then
     if b:getUserData().TakeDamage ~=nil then
       b:getUserData().TakeDamage(b, 500)
+      a:getUserData().body:setLinearVelocity(0, 0)
     end
   end
 
 end
 
 function player.TakeDamage(self, damage)
-
+  player.lives = player.lives - 1
+  if player.lives == 0 then
+    player.isDead = true;
+    player.diePlayer.gridAnimation:resume()
+  end
 end
 
 return player

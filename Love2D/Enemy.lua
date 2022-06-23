@@ -22,7 +22,7 @@ function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData, world)
 
   self.speed = 80000
 
-  self.shootInterval = 1
+  self.shootInterval = 1.5
   self.shootIntervalTimer = 0;
 
   self.waypointX1 = wpx1
@@ -117,7 +117,7 @@ function enemy.ShootPlayer(self, sheetFile)
   shootPlayer.sheet = love.graphics.newImage(sheetFile)
   shootPlayer.imageDimension = {shootPlayer.sheet:getDimensions()}
   shootPlayer.grid = anim8.newGrid(self.width, self.height, shootPlayer.imageDimension[1], shootPlayer.imageDimension[2])
-  shootPlayer.gridAnimation = anim8.newAnimation(shootPlayer.grid('1-12', 1), 0.1, self.OnLoopShoot, self)
+  shootPlayer.gridAnimation = anim8.newAnimation(shootPlayer.grid('1-12', 1), 0.025, self.OnLoopShoot, self)
   self.shootPlayer = shootPlayer
 
 end
