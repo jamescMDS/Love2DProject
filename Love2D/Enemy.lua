@@ -93,6 +93,10 @@ function enemy.Construct(self, x, y, wpx1, wpy1, wpx2, wpy2, animData, world)
 
   self.projectiles = {}
 
+  self.deathsfx = love.audio.newSource("death1.wav", "static")
+  self.deathsfx:setLooping(false)
+  self.deathsfx:setVolume(1)
+
 end
 
 -----------------------------------------------------------------------
@@ -143,17 +147,20 @@ end
 
 function enemy.OnLoopShoot(_anim, _loops, self)
   _anim:pauseAtStart()
-  local newProjectile = {}
-  setmetatable(newProjectile, {__index = projectile})
-  newProjectile.Construct(newProjectile, self.body:getX() + self.boxWidth / 1.95 + 40 * self.velx, self.body:getY() + 10, self.velx, 0, self.world)
-  table.insert(self.projectiles, 1, newProjectile)
+  if self.isDead == false then
+    local newProjectile = {}
+    setmetatable(newProjectile, {__index = projectile})
+    newProjectile.Construct(newProjectile, self.body:getX() + self.boxWidth / 1.95 + 40 * self.velx, self.body:getY() + 10, self.velx, 0, self.world)
+    table.insert(self.projectiles, 1, newProjectile)
+  end
+
 end
 
 function enemy.OnLoopDie(_anim, _loops, self)
 
   if self.isDead == true then
     self.destroy = true
-    self.DestroyPhysics(self)
+    --self.DestroyPhysics(self)
   else
     _anim:pauseAtStart()
   end
@@ -175,35 +182,35 @@ function enemy.Update(self, dt)
   end
 
   enemy.UpdateAnimations(self, dt)
-  if self.body == nil then
-    return
-  end
-  self.body:setAngle(0)
+  if self.body ~= nil then
+    self.body:setAngle(0)
 
-  enemy.Navigate(self, dt)
-  enemy.GroundedCheck(self)
-  enemy.UpdateProjectiles(self, dt)
+    enemy.Navigate(self, dt)
+    enemy.GroundedCheck(self)
+    enemy.UpdateProjectiles(self, dt)
 
 
-  self.x = self.body:getX()
-  self.y = self.body:getY()
+    self.x = self.body:getX()
+    self.y = self.body:getY()
 
-  enemy.CanSeePlayerCheck(self)
+    enemy.CanSeePlayerCheck(self)
 
-  if self.isShooting == false and self.canSeePlayer == true then
-    self.isShooting = true
-    self.shootIntervalTimer = self.shootInterval
-    self.shootPlayer.gridAnimation:resume()
+    if self.isShooting == false and self.canSeePlayer == true then
+      self.isShooting = true
+      self.shootIntervalTimer = self.shootInterval
+      self.shootPlayer.gridAnimation:resume()
 
-  end
+    end
 
-  if self.isShooting == true then
-    if self.shootIntervalTimer > 0 then
-      self.shootIntervalTimer = self.shootIntervalTimer - dt
-    else
-      self.isShooting = false
+    if self.isShooting == true then
+      if self.shootIntervalTimer > 0 then
+        self.shootIntervalTimer = self.shootIntervalTimer - dt
+      else
+        self.isShooting = false
+      end
     end
   end
+
 end
 
 function enemy.CanSeePlayerCheck(self)
@@ -220,14 +227,14 @@ function enemy.CanSeePlayerCheck(self)
   if table.getn(canSeePlayerRay.hitList) > 0 then
     if canSeePlayerRay.hitList[1].fixture:getUserData() == player then
       self.canSeePlayer = true
-      print("canSeePlayer")
+      --print("canSeePlayer")
     else
       self.canSeePlayer = false
-      print("cannot Player")
+      --print("cannot Player")
     end
   else
     self.canSeePlayer = false
-    print("cannot Player")
+    --print("cannot Player")
   end
 end
 
@@ -278,7 +285,7 @@ function enemy.Navigate(self, dt)
     local ny = self.vely
     self.velx, self.vely = math.normalize(nx, ny)
   end
-  print(self.velx)
+  --print(self.velx)
   self.body:applyForce(self.velx * self.speed * self.scale * dt, 0)
 end
 
@@ -316,8 +323,8 @@ end
 function enemy.Draw(self)
   --love.graphics.rectangle("line", player.x, player.y, (player.width) * player.scale, (player.height) * player.scale)
 
-  love.graphics.rectangle("line", self.body:getX() + (self.width * self.scale / 2 / 2), self.body:getY() + (self.height * self.scale * 0.1), self.width * self.scale / 2, self.height * self.scale * 0.8)
-
+  if self.body ~= nil then love.graphics.rectangle("line", self.body:getX() + (self.width * self.scale / 2 / 2), self.body:getY() + (self.height * self.scale * 0.1), self.width * self.scale / 2, self.height * self.scale * 0.8)
+  end
 
   if self.isDead == true then
     self.diePlayer.gridAnimation:draw(self.diePlayer.sheet, self.x, self.y, 0, self.scale, self.scale, 0, 0)
@@ -364,9 +371,11 @@ function enemy.OnCollisionBegin(a, b)
 end
 function enemy.TakeDamage(self, damage)
   self:getUserData().currentHealth = self:getUserData().currentHealth - damage
-  if self:getUserData().currentHealth <= 0 then
+  if self:getUserData().currentHealth <= 0 and self:getUserData().isDead == false then
     self:getUserData().isDead = true
+    self:getUserData().deathsfx:play()
     self:getUserData().diePlayer.gridAnimation:resume()
+    self:getUserData().DestroyPhysics(self:getUserData())
   end
 end
 

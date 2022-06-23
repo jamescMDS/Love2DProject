@@ -10,7 +10,6 @@ function gameScene.Construct(selectedPlayer)
   love.physics.setMeter(64)
   love.graphics.setDefaultFilter("nearest", "nearest")
   gameScene.selectedPlayer = selectedPlayer
-  print(selectedPlayer.runAnimationFile)
   gameScene.world = love.physics.newWorld(0, 10 * 64, false)
 
   gameScene.world:setCallbacks( beginContact, endContact, preSolve, postSolve )
@@ -23,7 +22,7 @@ function gameScene.Construct(selectedPlayer)
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
-  enemy1.Construct(enemy1, 1500, centerY, 1300, centerY, 1600, centerY, wraith1AnimData, gameScene.world)
+  enemy1.Construct(enemy1, 1400, centerY, 1350, centerY, 1580, centerY, wraith1AnimData, gameScene.world)
 
   table.insert(gameScene.enemies, enemy1)
 
@@ -35,7 +34,7 @@ function gameScene.Construct(selectedPlayer)
 
   enemy3 = {}
   setmetatable(enemy3, {__index = enemy})
-  enemy3.Construct(enemy3, 4800, 375, 4500, 450, 5100, 450, wraith1AnimData, gameScene.world)
+  enemy3.Construct(enemy3, 4800, 375, 4450, 450, 5100, 450, wraith1AnimData, gameScene.world)
 
   table.insert(gameScene.enemies, enemy3)
 
@@ -47,7 +46,7 @@ function gameScene.Construct(selectedPlayer)
 
   enemy5 = {}
   setmetatable(enemy5, {__index = enemy})
-  enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9900, 100, wraith1AnimData, gameScene.world)
+  enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9800, 100, wraith1AnimData, gameScene.world)
 
   table.insert(gameScene.enemies, enemy5)
 
@@ -65,7 +64,7 @@ function gameScene.Construct(selectedPlayer)
 
   sti = require("Simple-Tiled-Implementation-master/sti")
   --map = sti("map3.lua")
-  map = sti("mapfiles3.lua")
+  map = sti("mapfiles2.lua")
 
   border = love.graphics.newImage("fadegrad.png")
   platforms = {}
@@ -78,6 +77,16 @@ function gameScene.Construct(selectedPlayer)
   setmetatable(newPS, {__index = particleSystem})
 
   newPS.Construct(newPS, "BlueParticle.png", 1000, -1, 10, 12, 50)
+
+  bgSoundCave = love.audio.newSource("AmbientBG.wav", "static")
+  bgSoundCave:setLooping(true)
+  bgSoundCave:setVolume(0.5)
+  bgSoundCave:play()
+
+  bgSoundCave2 = love.audio.newSource("AmbientBG2.wav", "static")
+  bgSoundCave2:setLooping(true)
+  bgSoundCave2:setVolume(0.3)
+  bgSoundCave2:play()
 end
 
 function gameScene.Destruct()
@@ -105,10 +114,10 @@ function gameScene.Update(dt)
   player.Update(dt)
 
   for i = 1, table.getn(gameScene.enemies), 1 do
-    if gameScene.enemies[i] ~= nil then
+    if gameScene.enemies[i] ~= 1 then
       gameScene.enemies[i].Update(gameScene.enemies[i], dt)
       if gameScene.enemies[i].destroy == true then
-        gameScene.enemies[i] = nil
+        gameScene.enemies[i] = 1
       end
     end
 
@@ -118,7 +127,7 @@ function gameScene.Update(dt)
 
   --cam:lookAt(player.body:getX() + 300, player.body:getY() - 100)
   cam:lookAt(player.body:getX() + 300, centerY)
-  --cam:lookAt(11580, 250)
+  --cam:lookAt(9700, 250)
 
   psPosX, psPosY = newPS.system:getPosition()
 
@@ -145,9 +154,13 @@ function gameScene.Draw()
 
 
   player.Draw()
+  print(table.getn(gameScene.enemies))
   for i = 1, table.getn(gameScene.enemies), 1 do
-    if gameScene.enemies[i] ~= nil then
+    if gameScene.enemies[i] ~= 1 then
       gameScene.enemies[i].Draw(gameScene.enemies[i])
+      print("Enemy Draw", i)
+    else
+      print("Enemy nil", i)
     end
   end
 

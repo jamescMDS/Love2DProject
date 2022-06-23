@@ -26,6 +26,8 @@ function player.Construct(x, y, playerData, world)
   player.canShoot = true
   player.isShooting = false
   player.isVolting = false
+  player.voltTime = 2
+  player.voltTimer = 0
 
   player.projectiles = {}
 
@@ -37,6 +39,18 @@ function player.Construct(x, y, playerData, world)
 		hitList = {}
 	}
 
+  player.jump1sfx = love.audio.newSource("jump1.wav", "static")
+  player.jump1sfx:setLooping(false)
+  player.jump1sfx:setVolume(0.8)
+  player.jump2sfx = love.audio.newSource("jump2.wav", "static")
+  player.jump2sfx:setLooping(false)
+  player.jump2sfx:setVolume(0.8)
+  player.landsfx = love.audio.newSource("land.wav", "static")
+  player.landsfx:setLooping(false)
+  player.landsfx:setVolume(1)
+  player.voltsfx = love.audio.newSource("volt.wav", "static")
+  player.voltsfx:setLooping(false)
+  player.voltsfx:setVolume(1)
 end
 
 function player.ConstructPhysics()
@@ -86,8 +100,8 @@ end
 
 function player.OnLoopShoot(_anim, _loops)
   --print("ShootLoop")
-  _anim:pauseAtStart()
-  player.isShooting = false
+  _anim:pauseAtEnd()
+  --player.isShooting = false
 end
 
 function player.OnLoopShootRun(_anim, _loops)
@@ -121,7 +135,7 @@ function player.ShootPlayer()
   shootPlayer.sheet = love.graphics.newImage(player.playerData.attackAnimationFile)
   shootPlayer.imageDimension = {shootPlayer.sheet:getDimensions()}
   shootPlayer.grid = anim8.newGrid(player.width, player.height, shootPlayer.imageDimension[1], shootPlayer.imageDimension[2])
-  shootPlayer.gridAnimation = anim8.newAnimation(shootPlayer.grid('1-4', 1), 0.1, player.OnLoopShoot)
+  shootPlayer.gridAnimation = anim8.newAnimation(shootPlayer.grid('1-3', 1), 0.075, player.OnLoopShoot)
   player.shootPlayer = shootPlayer
 
 end
@@ -139,7 +153,7 @@ end
 function player.Update(dt)
   --player.body.setAngle(player.body, 0)
   player.body:setAngle(0)
-  print(player.body:getLinearVelocity())
+  --print(player.body:getLinearVelocity())
   local axisX = 0
 
   if love.keyboard.isDown('a') then
@@ -160,18 +174,37 @@ function player.Update(dt)
   end
 
   if love.keyboard.isDown('space') and player.isVolting == false and player.isIdle == false then
-    player.body:applyLinearImpulse(9000 * player.dir * dt, 0)
+    player.body:applyLinearImpulse(12000 * player.dir * dt, 0)
     player.isVolting = true
+    player.voltsfx:play()
+    player.voltTimer = player.voltTime
+    player.shootPlayer.gridAnimation:resume()
   end
 
   if player.isVolting == true then
-
     local vx, vy = player.body:getLinearVelocity()
-    print("VELX = ", vx)
+    if vx < 0 and axisX > 0 then
+      player.isVolting = false
+      player.shootPlayer.gridAnimation:pauseAtStart()
+      player.body:setLinearVelocity(0,0)
+    end
+    if vx > 0 and axisX < 0 then
+      player.isVolting = false
+      player.shootPlayer.gridAnimation:pauseAtStart()
+      player.body:setLinearVelocity(0,0)
+    end
+    if player.voltTimer > 0 then
+      player.voltTimer = player.voltTimer - dt
+    else
+      player.isVolting = false
+      player.shootPlayer.gridAnimation:pauseAtStart()
+      player.body:setLinearVelocity(0,0)
+    end
+
+
     if vx < 0 then vx = -vx end
     if vx < 200 then
       player.isVolting = false
-      print("ISVOLTING=FALSE")
     end
   end
   if player.isGrounded then
@@ -201,10 +234,12 @@ function player.Update(dt)
   if love.keyboard.isDown('w') and player.isVolting == false then
     if player.canJump == true then
       if player.isJumping == false and player.isGrounded == true then
+        player.jump1sfx:play()
         player.isJumping = true
         player.body:applyLinearImpulse(0, -10000 * player.scale * dt)
         player.jumpPlayer.gridAnimation:resume()
       else if(player.isJumping == false) then
+        player.jump2sfx:play()
         player.isJumping = true
         player.canJump = false
         player.body:applyLinearImpulse(0, -7000 * player.scale * dt)
@@ -216,7 +251,7 @@ function player.Update(dt)
   end
 
   player.GroundCheck()
-
+  player.UpdateAnimations(dt)
 end
 
 function player.CutVelocity(x, y)
@@ -292,6 +327,9 @@ function player.GroundCheck()
   player.world:rayCast(groundedRay.x1, groundedRay.y1, groundedRay.x2, groundedRay.y2, worldRayCastCallback)
 
   if table.getn(groundedRay.hitList) > 0 then
+    if player.isGrounded == false then
+      player.landsfx:play()
+    end
     player.isGrounded = true
     player.canJump = true
   else
@@ -313,20 +351,17 @@ function player.Draw()
 
   if player.isIdle == true and player.isGrounded == true and player.isShooting == false then
     player.idlePlayer.gridAnimation:draw(player.idlePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-  else if player.isGrounded == true and player.isShooting == false then
+  else if player.isGrounded == true and player.isVolting == false then
     player.runPlayer.gridAnimation:draw(player.runPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
   end
   end
 
   if player.isGrounded == false then
-    player.jumpPlayer.gridAnimation:draw(player.jumpPlayer.sheet, player.x + xOffset, player.y, 0, player.scale * scaleVal, player.scale, 0, 0)
+    player.jumpPlayer.gridAnimation:draw(player.jumpPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
   end
 
-  if player.isShooting == true and player.isIdle == true then
-    player.shootPlayer.gridAnimation:draw(player.shootPlayer.sheet, player.x + xOffset, player.y, 0, player.scale * scaleVal, player.scale, 0, 0)
-  end
-  if player.isShooting == true and player.isIdle == false then
-    player.shootRunPlayer.gridAnimation:draw(player.shootRunPlayer.sheet, player.x + xOffset, player.y, 0, player.scale * scaleVal, player.scale, 0, 0)
+  if player.isVolting == true then
+    player.shootPlayer.gridAnimation:draw(player.shootPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
   end
 
   for i = 1, table.getn(player.projectiles), 1 do
@@ -348,6 +383,14 @@ function worldRayCastCallback(fixture, x, y, xn, yn, fraction)
 end
 
 function player.OnCollisionBegin(a, b)
+  if a:getUserData().fixture == nil then
+    return
+  end
+  if player.isVolting == true then
+    if b:getUserData().TakeDamage ~=nil then
+      b:getUserData().TakeDamage(b, 500)
+    end
+  end
 
 end
 

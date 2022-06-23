@@ -23,7 +23,7 @@ function gameScene2.Construct(selectedPlayer)
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
-  enemy1.Construct(enemy1, 1500, centerY, 1300, centerY, 1600, centerY, wraith1AnimData, gameScene2.world)
+  enemy1.Construct(enemy1, 1400, centerY, 1300, centerY, 1450, centerY, wraith1AnimData, gameScene2.world)
 
   table.insert(gameScene2.enemies, enemy1)
 
@@ -65,7 +65,7 @@ function gameScene2.Construct(selectedPlayer)
 
   sti = require("Simple-Tiled-Implementation-master/sti")
   --map = sti("map3.lua")
-  map = sti("mapfiles2.lua")
+  map = sti("mapfiles3.lua")
 
   border = love.graphics.newImage("fadegrad.png")
   platforms = {}

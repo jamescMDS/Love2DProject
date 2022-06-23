@@ -34,6 +34,11 @@ function menuScene.Construct()
   map = sti("MenuMap.lua")
 
   bluePlayerBGimage = love.graphics.newImage("3 Dude_Monster/bluerez.png")
+
+  music = love.audio.newSource("menumusic.wav", "static")
+  music:setLooping(true)
+  music:setVolume(0.5)
+  music:play()
 end
 function menuScene.Destruct()
 end
@@ -158,6 +163,7 @@ function menuScene.StartClick()
     if love.mouse.getX() > centerX - startBtnImgDim[1] / 2 and love.mouse.getX() < centerX - startBtnImgDim[1] / 2 + startBtnImgDim[1] then
       if love.mouse.getY() > centerY - startBtnImgDim[2] * 3 and love.mouse.getY() < centerY - startBtnImgDim[2] * 3 + startBtnImgDim[2] then
         mouseLock = true
+        music:stop()
         ChangeScene("GameScene")
       end
     end
