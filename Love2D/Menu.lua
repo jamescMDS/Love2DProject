@@ -18,6 +18,9 @@ function menuScene.Construct()
   startBtnImg = love.graphics.newImage("button_start.png")
   startBtnImgDim = {startBtnImg:getDimensions()}
 
+  creditsBtnImg = love.graphics.newImage("button_credits.png")
+  creditsBtnImgDim = {creditsBtnImg:getDimensions()}
+
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
@@ -39,6 +42,13 @@ function menuScene.Construct()
   music:setLooping(true)
   music:setVolume(0.8)
   music:play()
+
+  font = love.graphics.newFont('ChrustyRock-ORLA.ttf', 40)
+  love.graphics.setFont(font)
+  controls = love.graphics.newText(love.graphics.getFont(), "Controls")
+  move = love.graphics.newText(love.graphics.getFont(), "Move: A, D")
+  jump = love.graphics.newText(love.graphics.getFont(), "Jump: W")
+  attack = love.graphics.newText(love.graphics.getFont(), "Attack: Space")
 end
 function menuScene.Destruct()
 end
@@ -50,6 +60,7 @@ function menuScene.Update(dt)
   -- default defaultDisplay
     menuScene.QuitClick()
     menuScene.PlayClick()
+    menuScene.CreditsClick()
 
   else
     -- character selection display
@@ -77,6 +88,10 @@ function menuScene.Draw()
   love.graphics.draw(bluePlayerBGimage, centerX + 220, centerY - 155, 0, -1, 1)
   map:drawLayer(map.layers["Tile Layer 1"])
 
+  love.graphics.draw(controls, centerX / 2 - 120, centerY + 25, 0, 1, 1)
+  love.graphics.draw(move, centerX / 2 - 120, centerY + 25 + 50, 0, 1, 1)
+  love.graphics.draw(jump, centerX / 2 - 120, centerY + 25 + 100, 0, 1, 1)
+  love.graphics.draw(attack, centerX / 2 - 120, centerY + 25 + 150, 0, 1, 1)
 
   --love.graphics.rectangle("fill", 0, 0, 1200, 640)
   if defaultDisplay == true then
@@ -87,7 +102,7 @@ function menuScene.Draw()
 
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(exitBtnImg, centerX - exitBtnImgDim[1] / 2, centerY + exitBtnImgDim[2], 0, 1, 1)
-
+    love.graphics.draw(creditsBtnImg, centerX - creditsBtnImgDim[1] / 2, centerY + creditsBtnImgDim[2] * 3, 0, 1, 1)
   else
     -- character selection display
     love.graphics.setColor(1, 1, 1, 1)
@@ -142,6 +157,18 @@ function menuScene.PlayClick()
       if love.mouse.getY() > centerY - playBtnImgDim[2] and love.mouse.getY() < centerY - playBtnImgDim[2] + playBtnImgDim[2] then
         mouseLock = true
         defaultDisplay = false
+      end
+    end
+  end
+end
+
+function menuScene.CreditsClick()
+  if love.mouse.isDown(1) and mouseLock == false then
+    if love.mouse.getX() > centerX - creditsBtnImgDim[1] / 2 and love.mouse.getX() < centerX - creditsBtnImgDim[1] / 2 + creditsBtnImgDim[1] then
+      if love.mouse.getY() > centerY + creditsBtnImgDim[2] * 3 and love.mouse.getY() < centerY + creditsBtnImgDim[2] * 3 + creditsBtnImgDim[2] then
+        mouseLock = true
+        music:stop()
+        ChangeScene("Credits")
       end
     end
   end

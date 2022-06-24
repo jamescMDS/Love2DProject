@@ -4,7 +4,7 @@ require "Enemy"
 require "Wraith1_AnimData"
 anim8 = require("anim8-master/anim8")
 cameraFile = require("hump-master/camera")
-require "particleSystem"
+require "ParticleSystem"
 
 function gameScene2.Construct(selectedPlayer)
   love.physics.setMeter(64)
@@ -19,7 +19,7 @@ function gameScene2.Construct(selectedPlayer)
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
-  player.Construct(700, centerY - 120, gameScene2.selectedPlayer, gameScene2.world)
+  player.Construct(700, centerY - 120, gameScene2.selectedPlayer, gameScene2.world, "GameScene2")
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
@@ -29,19 +29,19 @@ function gameScene2.Construct(selectedPlayer)
 
   enemy2 = {}
   setmetatable(enemy2, {__index = enemy})
-  enemy2.Construct(enemy2, 2300, 450, 2050, 450, 2600, 450, wraith1AnimData, gameScene2.world)
+  enemy2.Construct(enemy2, 3600, 200, 3375, 200, 3825, 200, wraith1AnimData, gameScene2.world)
 
   table.insert(gameScene2.enemies, enemy2)
 
   enemy3 = {}
   setmetatable(enemy3, {__index = enemy})
-  enemy3.Construct(enemy3, 4800, 375, 4500, 450, 5100, 450, wraith1AnimData, gameScene2.world)
+  enemy3.Construct(enemy3, 4125, 200, 3875, 200, 4300, 200, wraith1AnimData, gameScene2.world)
 
   table.insert(gameScene2.enemies, enemy3)
 
   enemy4 = {}
   setmetatable(enemy4, {__index = enemy})
-  enemy4.Construct(enemy4, 6000, 375, 5750, 450, 6200, 450, wraith1AnimData, gameScene2.world)
+  enemy4.Construct(enemy4, 7800, 100, 7600, 100, 7860, 100, wraith1AnimData, gameScene2.world)
 
   table.insert(gameScene2.enemies, enemy4)
 
@@ -50,6 +50,24 @@ function gameScene2.Construct(selectedPlayer)
   enemy5.Construct(enemy5, 9700, 100, 9400, 100, 9900, 100, wraith1AnimData, gameScene2.world)
 
   table.insert(gameScene2.enemies, enemy5)
+
+  enemy6 = {}
+  setmetatable(enemy6, {__index = enemy})
+  enemy6.Construct(enemy6, 10600, 300, 10500, 300, 10825, 100, wraith1AnimData, gameScene2.world)
+
+  table.insert(gameScene2.enemies, enemy6)
+
+  enemy7 = {}
+  setmetatable(enemy7, {__index = enemy})
+  enemy7.Construct(enemy7, 11200, 300, 11100, 300, 11500, 100, wraith1AnimData, gameScene2.world)
+
+  table.insert(gameScene2.enemies, enemy7)
+
+  enemy8 = {}
+  setmetatable(enemy8, {__index = enemy})
+  enemy8.Construct(enemy8, 12400, 400, 12000, 300, 12600, 100, wraith1AnimData, gameScene2.world)
+
+  table.insert(gameScene2.enemies, enemy8)
 
   --enemy2 = {}
   --setmetatable(enemy2, {__index = enemy})
@@ -78,6 +96,22 @@ function gameScene2.Construct(selectedPlayer)
   setmetatable(newPS, {__index = particleSystem})
 
   newPS.Construct(newPS, "BlueParticle.png", 1000, -1, 10, 12, 50)
+
+  bgSoundCave = love.audio.newSource("AmbientBG.wav", "static")
+  bgSoundCave:setLooping(true)
+  bgSoundCave:setVolume(0.5)
+  bgSoundCave:play()
+
+  bgSoundCave2 = love.audio.newSource("AmbientBG2.wav", "static")
+  bgSoundCave2:setLooping(true)
+  bgSoundCave2:setVolume(0.3)
+  bgSoundCave2:play()
+
+  winsfx = love.audio.newSource("win1.wav", "static")
+  winsfx:setLooping(false)
+  winsfx:setVolume(1)
+
+
 end
 
 function gameScene2.Destruct()
@@ -94,7 +128,7 @@ end
 function gameScene2.Update(dt)
   -- body...
 
-  if player.body:getY() > 640 then ChangeScene("Menu") return end
+  if player.body:getY() > 640 then player.deathsfx:play() ChangeScene("GameScene2") return end
   gameScene2.world:update(dt)
 
   player.x = player.body:getX()
@@ -105,10 +139,10 @@ function gameScene2.Update(dt)
   player.Update(dt)
 
   for i = 1, table.getn(gameScene2.enemies), 1 do
-    if gameScene2.enemies[i] ~= nil then
+    if gameScene2.enemies[i] ~= 1 then
       gameScene2.enemies[i].Update(gameScene2.enemies[i], dt)
       if gameScene2.enemies[i].destroy == true then
-        gameScene2.enemies[i] = nil
+        gameScene2.enemies[i] = 1
       end
     end
 
@@ -118,12 +152,13 @@ function gameScene2.Update(dt)
 
   --cam:lookAt(player.body:getX() + 300, player.body:getY() - 100)
   cam:lookAt(player.body:getX() + 300, centerY)
-  --cam:lookAt(11580, 250)
+  --cam:lookAt(13200, 200)
 
   psPosX, psPosY = newPS.system:getPosition()
 
-  if player.body:getX() > 11540 then
-    ChangeScene("Menu")
+  if player.body:getX() > 13160 then
+    winsfx:play()
+    ChangeScene("Credits")
   end
 end
 
@@ -146,12 +181,12 @@ function gameScene2.Draw()
 
   player.Draw()
   for i = 1, table.getn(gameScene2.enemies), 1 do
-    if gameScene2.enemies[i] ~= nil then
+    if gameScene2.enemies[i] ~= 1 then
       gameScene2.enemies[i].Draw(gameScene2.enemies[i])
     end
   end
 
-  love.graphics.draw(newPS.system, 11580, 285, 0, 0.05, 0.05, 250 * 0.05, 0)
+  love.graphics.draw(newPS.system, 13200, 285, 0, 0.05, 0.05, 250 * 0.05, 0)
 
   map:drawLayer(map.layers["Tile Layer 4"])
   map:drawLayer(map.layers["Tile Layer 3"])
@@ -165,7 +200,9 @@ function gameScene2.Draw()
 
   --love.graphics.setColor(255, 255, 255, 255)
   cam:detach()
-
+  for i = 0, player.lives - 1, 1 do
+    love.graphics.draw(player.heart, 25 + 50 * i, 25, 0, 2.3, 2.3)
+  end
 end
 
 function gameScene2.AddPhysicsToLevel()

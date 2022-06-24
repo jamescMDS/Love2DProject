@@ -1,9 +1,10 @@
 player = {}
 require "Projectile"
 
-function player.Construct(x, y, playerData, world)
+function player.Construct(x, y, playerData, world, sceneName)
 
   print("Player::Construct")
+  player.scene = sceneName
   player.world = world
   player.playerData = playerData
   player.x = x
@@ -123,7 +124,7 @@ function player.OnLoopDie(_anim, _loops)
   --print("RunLoop")
   _anim:pauseAtStart()
   if player.isDead == true then
-    ChangeScene("Menu")
+    ChangeScene(player.scene)
   end
 end
 
@@ -390,7 +391,7 @@ function player.GroundCheck()
 end
 
 function player.Draw()
-  love.graphics.rectangle("line", player.body:getX(), player.body:getY(), player.width * player.scale, player.height * player.scale)
+  --love.graphics.rectangle("line", player.body:getX(), player.body:getY(), player.width * player.scale, player.height * player.scale)
 
   if player.isDead == false then
 

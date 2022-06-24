@@ -4,7 +4,7 @@ require "Enemy"
 require "Wraith1_AnimData"
 anim8 = require("anim8-master/anim8")
 cameraFile = require("hump-master/camera")
-require "particleSystem"
+require "ParticleSystem"
 
 function gameScene.Construct(selectedPlayer)
   love.physics.setMeter(64)
@@ -18,11 +18,11 @@ function gameScene.Construct(selectedPlayer)
   centerX = love.graphics.getWidth()/2
   centerY = love.graphics.getHeight()/2
 
-  player.Construct(700, centerY - 100, gameScene.selectedPlayer, gameScene.world)
+  player.Construct(700, centerY - 100, gameScene.selectedPlayer, gameScene.world, "GameScene")
 
   enemy1 = {}
   setmetatable(enemy1, {__index = enemy})
-  enemy1.Construct(enemy1, 1400, centerY, 1350, centerY, 1580, centerY, wraith1AnimData, gameScene.world)
+  enemy1.Construct(enemy1, 1450, centerY, 1350, centerY, 1580, centerY, wraith1AnimData, gameScene.world)
 
   table.insert(gameScene.enemies, enemy1)
 
@@ -107,7 +107,7 @@ end
 function gameScene.Update(dt)
   -- body...
 
-  if player.body:getY() > 640 then ChangeScene("Menu") return end
+  if player.body:getY() > 640 then player.deathsfx:play() ChangeScene("GameScene") return end
   gameScene.world:update(dt)
 
   player.x = player.body:getX()
@@ -159,13 +159,9 @@ function gameScene.Draw()
 
 
   player.Draw()
-  print(table.getn(gameScene.enemies))
   for i = 1, table.getn(gameScene.enemies), 1 do
     if gameScene.enemies[i] ~= 1 then
       gameScene.enemies[i].Draw(gameScene.enemies[i])
-      print("Enemy Draw", i)
-    else
-      print("Enemy nil", i)
     end
   end
 

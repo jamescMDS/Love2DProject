@@ -1,5 +1,6 @@
 --require "Player"
 menu = require("Menu")
+creds = require("Credits")
 gs = require("GameScene")
 gs2 = require("GameScene2")
 currentScene = {}
@@ -18,6 +19,7 @@ function love.load(arg)
 
   print("Main")
   menu.Construct()
+
   --gs.Construct()
 end
 
@@ -36,6 +38,10 @@ function love.update(dt)
     if nextscene == "GameScene2" then
       gs2.Construct(selectedPlayerData)
       currentScene = gs2;
+    end
+    if nextscene == "Credits" then
+      creds.Construct()
+      currentScene = creds;
     end
     if nextscene == "Menu" then menu.Construct() currentScene = menu end
   end

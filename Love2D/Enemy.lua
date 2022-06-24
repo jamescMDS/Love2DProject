@@ -326,8 +326,7 @@ end
 function enemy.Draw(self)
   --love.graphics.rectangle("line", player.x, player.y, (player.width) * player.scale, (player.height) * player.scale)
 
-  if self.body ~= nil then love.graphics.rectangle("line", self.body:getX() + (self.width * self.scale / 2 / 2), self.body:getY() + (self.height * self.scale * 0.1), self.width * self.scale / 2, self.height * self.scale * 0.8)
-  end
+
 
   if self.isDead == true then
     self.diePlayer.gridAnimation:draw(self.diePlayer.sheet, self.x, self.y, 0, self.scale, self.scale, 0, 0)
