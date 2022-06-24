@@ -32,7 +32,7 @@ function player.Construct(x, y, playerData, world)
   player.voltTimer = 0
   player.isDead = false;
   player.lives = 3
-
+  player.isTakingDamage = false
   player.projectiles = {}
 
   groundedRay = {
@@ -55,6 +55,13 @@ function player.Construct(x, y, playerData, world)
   player.voltsfx = love.audio.newSource("volt.wav", "static")
   player.voltsfx:setLooping(false)
   player.voltsfx:setVolume(1)
+  player.damagesfx = love.audio.newSource("damage1.wav", "static")
+  player.damagesfx:setLooping(false)
+  player.damagesfx:setVolume(0.7)
+
+  player.deathsfx = love.audio.newSource("death2.wav", "static")
+  player.deathsfx:setLooping(false)
+  player.deathsfx:setVolume(0.7)
 end
 
 function player.ConstructPhysics()
@@ -76,6 +83,7 @@ function player.ConstructAnimations()
   player.ShootPlayer()
   player.ShootRunPlayer()
   player.DiePlayer()
+  player.DamagePlayer()
 
 end
 
@@ -90,8 +98,25 @@ function player.RunPlayer()
 
 end
 
+function player.DamagePlayer()
+  damagePlayer = {}
+  damagePlayer.sheet = love.graphics.newImage(player.playerData.damageAnimationFile)
+  damagePlayer.imageDimension = {damagePlayer.sheet:getDimensions()}
+
+  damagePlayer.grid = anim8.newGrid(player.width, player.height, damagePlayer.imageDimension[1], damagePlayer.imageDimension[2])
+  damagePlayer.gridAnimation = anim8.newAnimation(damagePlayer.grid('1-4', 1), 0.1, player.OnLoopDamage)
+  player.damagePlayer = damagePlayer
+
+end
+
 function player.OnLoopRun(_anim, _loops)
   --print("RunLoop")
+end
+
+function player.OnLoopDamage(_anim, _loops)
+  --print("RunLoop")
+  player.isTakingDamage = false
+  _anim:pauseAtStart()
 end
 
 function player.OnLoopDie(_anim, _loops)
@@ -193,6 +218,7 @@ function player.Update(dt)
       player.jumpPlayer.gridAnimation:flipH()
       player.shootPlayer.gridAnimation:flipH()
       player.diePlayer.gridAnimation:flipH()
+      player.damagePlayer.gridAnimation:flipH()
     end
     player.dir = axisX
   end
@@ -325,6 +351,7 @@ function player.UpdateAnimations(dt)
   player.shootPlayer.gridAnimation:update(dt)
   player.shootRunPlayer.gridAnimation:update(dt)
   player.diePlayer.gridAnimation:update(dt)
+  player.damagePlayer.gridAnimation:update(dt)
 end
 
 function player.GroundCheck()
@@ -367,9 +394,9 @@ function player.Draw()
 
   if player.isDead == false then
 
-    if player.isIdle == true and player.isGrounded == true and player.isShooting == false then
+    if player.isIdle == true and player.isGrounded == true and player.isShooting == false and player.isTakingDamage == false then
       player.idlePlayer.gridAnimation:draw(player.idlePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
-    else if player.isGrounded == true and player.isVolting == false then
+    else if player.isGrounded == true and player.isVolting == false and player.isTakingDamage == false then
       player.runPlayer.gridAnimation:draw(player.runPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
     end
     end
@@ -378,8 +405,12 @@ function player.Draw()
       player.jumpPlayer.gridAnimation:draw(player.jumpPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
     end
 
-    if player.isVolting == true then
+    if player.isVolting == true and player.isTakingDamage == false then
       player.shootPlayer.gridAnimation:draw(player.shootPlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
+    end
+
+    if player.isTakingDamage == true then
+      player.damagePlayer.gridAnimation:draw(player.damagePlayer.sheet, player.x, player.y, 0, player.scale, player.scale, 0, 0)
     end
 
     for i = 1, table.getn(player.projectiles), 1 do
@@ -421,9 +452,13 @@ end
 
 function player.TakeDamage(self, damage)
   player.lives = player.lives - 1
+  player.damagePlayer.gridAnimation:resume()
+  player.damagesfx:play()
+  player.isTakingDamage = true
   if player.lives == 0 then
     player.isDead = true;
     player.diePlayer.gridAnimation:resume()
+    player.deathsfx:play()
   end
 end
 

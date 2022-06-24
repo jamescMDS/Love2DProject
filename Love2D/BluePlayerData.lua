@@ -8,6 +8,7 @@ function bluePlayerData.Construct()
   bluePlayerData.jumpAnimationFile = '3 Dude_Monster/Dude_Monster_Jump_8.png'
   bluePlayerData.idleAnimationFile = '3 Dude_Monster/Dude_Monster_Idle_4.png'
   bluePlayerData.dieAnimationFile = '3 Dude_Monster/Dude_Monster_Death_8.png'
+  bluePlayerData.damageAnimationFile = '3 Dude_Monster/Dude_Monster_Hurt_4.png'
 
 end
 

@@ -8,6 +8,7 @@ function whitePlayerData.Construct()
   whitePlayerData.jumpAnimationFile = '2 Owlet_Monster/Owlet_Monster_Jump_8.png'
   whitePlayerData.idleAnimationFile = '2 Owlet_Monster/Owlet_Monster_Idle_4.png'
   whitePlayerData.dieAnimationFile = '2 Owlet_Monster/Owlet_Monster_Death_8.png'
+  whitePlayerData.damageAnimationFile = '2 Owlet_Monster/Owlet_Monster_Hurt_4.png'
 
 end
 

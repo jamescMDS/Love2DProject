@@ -87,6 +87,10 @@ function gameScene.Construct(selectedPlayer)
   bgSoundCave2:setLooping(true)
   bgSoundCave2:setVolume(0.3)
   bgSoundCave2:play()
+
+  winsfx = love.audio.newSource("win1.wav", "static")
+  winsfx:setLooping(false)
+  winsfx:setVolume(1)
 end
 
 function gameScene.Destruct()
@@ -132,6 +136,7 @@ function gameScene.Update(dt)
   psPosX, psPosY = newPS.system:getPosition()
 
   if player.body:getX() > 11540 then
+    winsfx:play()
     ChangeScene("GameScene2")
   end
 end
